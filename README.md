@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+>
+> This repository is a fork of the official Symfony AI repository. It adds
+> support for Symfony 6.4 and later versions. It is not maintained by the
+> official Symfony team. Use it at your own risk.
+
+
 <p align="center"><a href="https://ai.symfony.com" target="_blank">
     <img src="logo.svg" alt="Symfony AI Logo" width="300">
 </a></p>

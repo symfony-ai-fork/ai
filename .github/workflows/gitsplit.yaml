@@ -1,0 +1,25 @@
+name: gitsplit
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+  release:
+    types: [published]
+
+jobs:
+  gitsplit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        run: git clone https://github.com/symfony-ai-fork/ai /home/runner/work/ai/ai && cd /home/runner/work/ai/ai
+
+      - name: Split repositories
+        uses: docker://jderusse/gitsplit:latest
+        with:
+          args: gitsplit
+        env:
+          GH_TOKEN: ${{ secrets.PRIVATE_TOKEN }}

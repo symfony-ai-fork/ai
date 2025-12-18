@@ -1,0 +1,19 @@
+# See https://github.com/jderusse/docker-gitsplit
+
+splits:
+  - prefix: "src/agent"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/agent.git"
+  - prefix: "src/ai-bundle"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/ai-bundle.git"
+  - prefix: "src/chat"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/chat.git"
+  - prefix: "src/mcp-bundle"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/mcp-bundle.git"
+  - prefix: "src/platform"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/platform.git"
+  - prefix: "src/store"
+    target: "https://${GH_TOKEN}@github.com/symfony-ai-fork/store.git"
+
+origins:
+  - ^main$
+  - ^\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$
