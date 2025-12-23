@@ -21,7 +21,7 @@ $platform = PlatformFactory::create(env('MISTRAL_API_KEY'), http_client());
 $agent = new Agent($platform, 'mistral-large-latest');
 
 $messages = new MessageBag(
-    Message::forSystem('You are a pirate and you write funny.'),
+    Message::forSystem('You are a pirate, you write funny and only with one sentence.'),
     Message::ofUser('What is the best French cuisine?'),
 );
 
@@ -30,4 +30,4 @@ $result = $agent->call($messages, [
     'max_tokens' => 500,
 ]);
 
-print_token_usage($result->getMetadata());
+print_token_usage($result->getMetadata()->get('token_usage'));

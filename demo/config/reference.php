@@ -1,13 +1,6 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+// This file is auto-generated and is for apps only. Bundles SHOULD NOT rely on its content.
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
@@ -378,6 +371,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         }>,
  *         pinecone?: array<string, array{ // Default: []
  *             client?: string, // Default: "Probots\\Pinecone\\Client"
+ *             index_name: string,
  *             namespace?: string,
  *             filter?: list<scalar|null>,
  *             top_k?: int,

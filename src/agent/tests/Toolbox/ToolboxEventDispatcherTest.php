@@ -26,6 +26,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 final class ToolboxEventDispatcherTest extends TestCase
 {
     private Toolbox $toolbox;
+
+    /**
+     * @var array<string>
+     */
     private array $dispatchedEvents = [];
 
     /**
@@ -63,7 +67,7 @@ final class ToolboxEventDispatcherTest extends TestCase
             $this->toolbox->execute(new ToolCall('call_1234', 'tool_exception'));
         } catch (\Throwable) {
         }
-        $this->assertEquals([
+        $this->assertSame([
             ToolCallArgumentsResolved::class,
             ToolCallFailed::class,
         ], $this->dispatchedEvents);
@@ -75,7 +79,7 @@ final class ToolboxEventDispatcherTest extends TestCase
             $this->toolbox->execute(new ToolCall('call_1234', 'tool_custom_exception'));
         } catch (\Throwable) {
         }
-        $this->assertEquals([
+        $this->assertSame([
             ToolCallArgumentsResolved::class,
             ToolCallFailed::class,
         ], $this->dispatchedEvents);
@@ -87,7 +91,7 @@ final class ToolboxEventDispatcherTest extends TestCase
             $this->toolbox->execute(new ToolCall('call_1234', 'tool_no_params'));
         } catch (\Throwable) {
         }
-        $this->assertEquals([
+        $this->assertSame([
             ToolCallArgumentsResolved::class,
             ToolCallSucceeded::class,
         ], $this->dispatchedEvents);
