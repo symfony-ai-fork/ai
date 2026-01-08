@@ -16,4 +16,4 @@ splits:
 
 origins:
   - ^main$
-  - ^\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$
+  - ^v\d+\.\d+\.\d+(-(alpha|beta|rc)\d)?$
