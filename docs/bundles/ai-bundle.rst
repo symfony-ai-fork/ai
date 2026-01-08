@@ -51,6 +51,11 @@ Advanced Example with Multiple Agents
                     deployment: '%env(AZURE_OPENAI_GPT)%'
                     api_key: '%env(AZURE_OPENAI_KEY)%'
                     api_version: '%env(AZURE_GPT_VERSION)%'
+            bedrock:
+                # multiple instances possible - for example region depending
+                default: ~
+                eu:
+                    bedrock_runtime_client: 'async_aws.client.bedrock_runtime_eu'
             eleven_labs:
                 host: '%env(ELEVEN_LABS_HOST)%'
                 api_key: '%env(ELEVEN_LABS_API_KEY)%'
@@ -62,8 +67,10 @@ Advanced Example with Multiple Agents
             vertexai:
                 location: '%env(GOOGLE_CLOUD_LOCATION)%'
                 project_id: '%env(GOOGLE_CLOUD_PROJECT)%'
+                api_key: '%env(GOOGLE_CLOUD_VERTEX_API_KEY)%' # Only needed if authenticating with API keys
             ollama:
                 host_url: '%env(OLLAMA_HOST_URL)%'
+            transformersphp: ~
         agent:
             rag:
                 platform: 'ai.platform.azure.gpt_deployment'
@@ -99,6 +106,10 @@ Advanced Example with Multiple Agents
             audio:
                 platform: 'ai.platform.eleven_labs'
                 model: 'text-to-speech'
+                tools: false
+            nova:
+                platform: 'ai.platform.bedrock.default'
+                model: 'nova-pro'
                 tools: false
         store:
             chromadb:

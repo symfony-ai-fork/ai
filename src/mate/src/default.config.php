@@ -23,7 +23,6 @@ return static function (ContainerConfigurator $container): void {
         : false;
 
     $container->parameters()
-        ->set('mate.root_dir', '%env(MATE_ROOT_DIR)%')
         ->set('mate.cache_dir', sys_get_temp_dir().'/mate')
         ->set('mate.env_file', null)
         ->set('mate.disabled_features', [])
@@ -38,8 +37,15 @@ return static function (ContainerConfigurator $container): void {
             ->autowire()
             ->autoconfigure()
 
+        ->set('_build.logger', Logger::class)
+            ->private() // To be removed when we compile
+            ->arg('$logFile', $debugLogFile)
+            ->arg('$fileLogEnabled', $debugFileEnabled)
+            ->arg('$debugEnabled', $debugEnabled)
+
         ->set(LoggerInterface::class, Logger::class)
-            ->arg('$logFile', '%mate.debug_log_file%')
+            ->public()
+            ->arg('$logFile', '%mate.root_dir%/%mate.debug_log_file%')
             ->arg('$fileLogEnabled', '%mate.debug_file_enabled%')
             ->arg('$debugEnabled', '%mate.debug_enabled%')
             ->alias(Logger::class, LoggerInterface::class)

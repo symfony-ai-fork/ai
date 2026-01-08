@@ -12,7 +12,8 @@
 namespace Symfony\AI\Mate\Command;
 
 use Psr\Log\LoggerInterface;
-use Symfony\AI\Mate\Discovery\ComposerTypeDiscovery;
+use Symfony\AI\Mate\Discovery\ComposerExtensionDiscovery;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,13 +28,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @author Johannes Wachter <johannes@sulu.io>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
+#[AsCommand('discover', 'Discover MCP bridges installed via Composer')]
 class DiscoverCommand extends Command
 {
+    private ComposerExtensionDiscovery $extensionDiscovery;
+
     public function __construct(
         private string $rootDir,
         private LoggerInterface $logger,
     ) {
         parent::__construct(self::getDefaultName());
+
+        $this->extensionDiscovery = new ComposerExtensionDiscovery($this->rootDir, $this->logger);
     }
 
     public static function getDefaultName(): string
@@ -54,9 +60,7 @@ class DiscoverCommand extends Command
         $io->text('Scanning for packages with <info>extra.ai-mate</info> configuration...');
         $io->newLine();
 
-        $discovery = new ComposerTypeDiscovery($this->rootDir, $this->logger);
-
-        $extensions = $discovery->discover([]);
+        $extensions = $this->extensionDiscovery->discover();
 
         $count = \count($extensions);
         if (0 === $count) {

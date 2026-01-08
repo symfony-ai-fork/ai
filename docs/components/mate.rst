@@ -290,6 +290,85 @@ Commands
 ``mate clear-cache``
     Clear the MCP server cache.
 
+``mate debug:capabilities``
+    Display all discovered MCP capabilities grouped by extension. This command is useful for:
+
+    - Verifying extension installation and capability registration
+    - Debugging missing or misconfigured extensions
+    - Understanding which package provides each capability
+    - Inspecting available tools during development
+
+    **Options:**
+
+    ``--format=FORMAT``
+        Output format: ``text`` (default) or ``json``
+
+    ``--extension=EXTENSION``
+        Filter by extension package name (e.g., ``symfony/ai-monolog-mate-extension``)
+
+    ``--type=TYPE``
+        Filter by capability type: ``tool``, ``resource``, ``prompt``, or ``template``
+
+    **Examples:**
+
+    .. code-block:: terminal
+
+        # Show all capabilities
+        $ vendor/bin/mate debug:capabilities
+
+        # Show only tools
+        $ vendor/bin/mate debug:capabilities --type=tool
+
+        # Show capabilities from specific extension
+        $ vendor/bin/mate debug:capabilities --extension=symfony/ai-monolog-mate-extension
+
+        # JSON output for scripting
+        $ vendor/bin/mate debug:capabilities --format=json
+
+        # Root project capabilities
+        $ vendor/bin/mate debug:capabilities --extension=_custom
+
+``mate debug:extensions``
+    Display detailed information about discovered and loaded MCP extensions. This command is useful for:
+
+    - Understanding which extensions are discovered vs enabled vs loaded
+    - Debugging extension loading issues
+    - Verifying extension configuration from ``mate/extensions.php``
+    - Inspecting scan directories and include files
+    - Troubleshooting why an extension isn't providing capabilities
+
+    **Status Indicators:**
+
+    ``[enabled]``
+        Extension is configured to load in ``mate/extensions.php``
+
+    ``[loaded]``
+        Extension successfully loaded into the DI container
+
+    ``[not loaded]``
+        Extension failed to load (package removed, error, etc.) - useful for troubleshooting
+
+    **Options:**
+
+    ``--format=FORMAT``
+        Output format: ``text`` (default) or ``json``
+
+    ``--show-all``
+        Show all discovered extensions including disabled ones
+
+    **Examples:**
+
+    .. code-block:: terminal
+
+        # Show enabled extensions
+        $ vendor/bin/mate debug:extensions
+
+        # Show all extensions (including disabled)
+        $ vendor/bin/mate debug:extensions --show-all
+
+        # JSON output for scripting
+        $ vendor/bin/mate debug:extensions --format=json
+
 Security
 --------
 

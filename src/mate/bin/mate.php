@@ -15,6 +15,10 @@ $autoloadPaths = [
     __DIR__.'/../vendor/autoload.php', // Package autoloader (fallback)
 ];
 
+if (isset($GLOBALS['_composer_autoload_path'])) {
+    array_unshift($autoloadPaths, $GLOBALS['_composer_autoload_path']);
+}
+
 $root = null;
 foreach ($autoloadPaths as $autoloadPath) {
     if (file_exists($autoloadPath)) {
@@ -28,9 +32,6 @@ if (!$root) {
     echo 'Unable to locate the Composer vendor directory. Did you run composer install?'.\PHP_EOL;
     exit(1);
 }
-
-// Set the root directory as an environment variable using $_ENV to be thread-safe
-$_ENV['MATE_ROOT_DIR'] = $root;
 
 use Symfony\AI\Mate\App;
 use Symfony\AI\Mate\Container\ContainerFactory;

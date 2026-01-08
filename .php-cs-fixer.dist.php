@@ -63,8 +63,9 @@ return (new PhpCsFixer\Config())
     ->setFinder(
         (new PhpCsFixer\Finder())
             ->in(__DIR__)
-            ->exclude(['ai.symfony.com', 'var', 'vendor'])
+            ->exclude(['ai.symfony.com', 'demo/mate', 'var', 'vendor'])
             ->notPath([
+                'demo/config/bundles.php',
                 'demo/config/reference.php',
                 'src/mate/resources/mate/config.php',
                 'src/mate/resources/mate/extensions.php',

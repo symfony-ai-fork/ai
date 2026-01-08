@@ -29,7 +29,7 @@ use Psr\Log\LoggerInterface;
  * @author Johannes Wachter <johannes@sulu.io>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-final class ComposerTypeDiscovery
+final class ComposerExtensionDiscovery
 {
     /**
      * @var array<string, array{
@@ -46,11 +46,11 @@ final class ComposerTypeDiscovery
     }
 
     /**
-     * @param string[] $enabledExtensions
+     * @param string[]|false $includeFilter Only include packages in this list. If false, include all.
      *
      * @return array<string, array{dirs: string[], includes: string[]}>
      */
-    public function discover(array $enabledExtensions = []): array
+    public function discover(array|false $includeFilter = false): array
     {
         $installed = $this->getInstalledPackages();
         $extensions = [];
@@ -63,9 +63,7 @@ final class ComposerTypeDiscovery
                 continue;
             }
 
-            if ([] !== $enabledExtensions && !\in_array($packageName, $enabledExtensions, true)) {
-                $this->logger->debug('Skipping package not enabled', ['package' => $packageName]);
-
+            if (false !== $includeFilter && !\in_array($packageName, $includeFilter, true)) {
                 continue;
             }
 
@@ -87,8 +85,21 @@ final class ComposerTypeDiscovery
      */
     public function discoverRootProject(): array
     {
-        $composerContent = file_get_contents($this->rootDir.'/composer.json');
+        $composerPath = $this->rootDir.'/composer.json';
+        if (!file_exists($composerPath)) {
+            return [
+                'dirs' => [],
+                'includes' => [],
+            ];
+        }
+
+        $composerContent = file_get_contents($composerPath);
         if (false === $composerContent) {
+            $this->logger->warning('Failed to read root composer.json', [
+                'path' => $composerPath,
+                'error' => error_get_last()['message'] ?? 'Unknown error',
+            ]);
+
             return [
                 'dirs' => [],
                 'includes' => [],
@@ -103,23 +114,9 @@ final class ComposerTypeDiscovery
             ];
         }
 
-        $scanDirs = [];
-        if (isset($rootComposer['extra']) && \is_array($rootComposer['extra'])
-            && isset($rootComposer['extra']['ai-mate']) && \is_array($rootComposer['extra']['ai-mate'])
-            && isset($rootComposer['extra']['ai-mate']['scan-dirs']) && \is_array($rootComposer['extra']['ai-mate']['scan-dirs'])) {
-            $scanDirs = array_filter($rootComposer['extra']['ai-mate']['scan-dirs'], 'is_string');
-        }
-
-        $includes = [];
-        if (isset($rootComposer['extra']) && \is_array($rootComposer['extra'])
-            && isset($rootComposer['extra']['ai-mate']) && \is_array($rootComposer['extra']['ai-mate'])
-            && isset($rootComposer['extra']['ai-mate']['includes']) && \is_array($rootComposer['extra']['ai-mate']['includes'])) {
-            $includes = array_filter($rootComposer['extra']['ai-mate']['includes'], 'is_string');
-        }
-
         return [
-            'dirs' => array_values($scanDirs),
-            'includes' => array_values($includes),
+            'dirs' => array_values($this->extractAiMateConfig($rootComposer, 'scan-dirs')),
+            'includes' => array_values($this->extractAiMateConfig($rootComposer, 'includes')),
         ];
     }
 
@@ -146,7 +143,10 @@ final class ComposerTypeDiscovery
 
         $content = file_get_contents($installedJsonPath);
         if (false === $content) {
-            $this->logger->warning('Could not read installed.json', ['path' => $installedJsonPath]);
+            $this->logger->warning('Could not read installed.json', [
+                'path' => $installedJsonPath,
+                'error' => error_get_last()['message'] ?? 'Unknown error',
+            ]);
 
             return $this->installedPackages = [];
         }
@@ -308,5 +308,24 @@ final class ComposerTypeDiscovery
         }
 
         return $validFiles;
+    }
+
+    /**
+     * @param array<string, mixed> $composer
+     *
+     * @return string[]
+     */
+    private function extractAiMateConfig(array $composer, string $key): array
+    {
+        if (!isset($composer['extra']['ai-mate'][$key])) {
+            return [];
+        }
+
+        $value = $composer['extra']['ai-mate'][$key];
+        if (!\is_array($value)) {
+            return [];
+        }
+
+        return array_filter($value, 'is_string');
     }
 }
